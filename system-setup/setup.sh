@@ -1,3 +1,4 @@
+#!/bin/bash
 set -euo pipefail
 IFS=$'\n\t'
 
@@ -31,7 +32,36 @@ detect_os() {
     fi
 
 }
+# USAGE
+# detect_os
 
-detect_os
+# Check if a package is installed and install if missing
+install_if_missing() {
+    local package="$1"
+    local install_command="${2:-brew install $package}"
+    # :- => “use this default if $2 is unset or empty”
+    # ${2:-brew install $package} => if $2 is unset or empty, use "brew install $package"
+    # ${2:-} => if $2 is unset or empty, use ""
 
-echo "$OS"
+    if ! command -v "$package" &> /dev/null; then
+        echo "$package is not installed. Installing..."
+        eval "$install_command"
+    else 
+        echo "$package is installed."
+    fi
+
+    # command -v => Checks if command exists
+    # &> /dev/null => Redirects both stdout and stderr to /dev/null (suppresses output)
+    # ! => Negates the result of the command
+    # eval => Executes the command
+    # local => Creates a local variable
+}
+
+# Check and install Homebrew
+install_if_missing "brew" '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+
+# Check and install Node and Git
+install_if_missing "node"
+install_if_missing "git"
+
+# echo "$OS"
