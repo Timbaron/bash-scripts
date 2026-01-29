@@ -101,3 +101,31 @@ configure_env() {
 detect_os
 configure_env
 
+# Clone repositories
+clone_repos() {
+    local repos=(
+        "https://github.com/timothyakiode/system-setup.git"
+        "https://github.com/timothyakiode/system-setup.git"
+    )
+
+    for repo in "${repos[@]}"; do
+        local repo_name="${repo##*/}"
+        # ${repo##*/} => Removes everything up to and including the last slash "/"
+        # example: ${https://github.com/timothyakiode/system-setup.git##*/}
+        # output: system-setup.git
+        if [[ ! -d "$repo_name" ]]; then
+            # -d => Checks if the file exists and is a directory.
+            # -f => Checks if the file exists and is a regular file (not a directory).
+            # -e => Checks if the file exists (either as a file or a directory).
+            # -s => Checks if the file exists and has a size greater than zero.
+            # -r => Checks if the file exists and is readable.
+            # -w => Checks if the file exists and is writable.
+            # -x => Checks if the file exists and is executable.
+            # ! => Negates the result of the command
+            echo "Cloning $repo_name..."
+            git clone "$repo"
+        else
+            echo "$repo_name already exists."
+        fi
+    done
+}
