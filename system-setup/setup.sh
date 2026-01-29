@@ -129,3 +129,57 @@ clone_repos() {
         fi
     done
 }
+
+
+# Set up test databases
+setup_databases() {
+    local db_type="${1:-postgres}"
+    echo "Setting up $db_type databases..."
+    
+    if [[ "$db_type" == "postgres" ]]; then
+        # Check and install PostgreSQL (using psql to check)
+        install_if_missing "psql" "brew install postgresql"
+
+        # Create test databases
+        createdb -U postgres testdb1 || echo "testdb1 may already exist"
+        createdb -U postgres testdb2 || echo "testdb2 may already exist"
+        # -U postgres => runs the command as the postgres superuser.
+        
+        # Create test users
+        createuser -U postgres testuser1 || echo "testuser1 may already exist"
+        createuser -U postgres testuser2 || echo "testuser2 may already exist"
+        # -U postgres => run as postgres superuser
+
+        # Grant privileges
+        psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE testdb1 TO testuser1"
+        psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE testdb2 TO testuser2"
+
+        # U => run as postgres superuser
+        # -c "SQL_COMMAND" => execute a SQL statement
+
+    elif [[ "$db_type" == "mysql" ]]; then
+        # Check and install MySQL
+        install_if_missing "mysql"
+
+        # Create databases
+        mysql -e "CREATE DATABASE IF NOT EXISTS testdb1;"
+        mysql -e "CREATE DATABASE IF NOT EXISTS testdb2;"
+
+        # Create users and grant privileges
+        mysql -e "CREATE USER IF NOT EXISTS 'testuser1'@'localhost' IDENTIFIED BY 'password';"
+        mysql -e "GRANT ALL PRIVILEGES ON testdb1.* TO 'testuser1'@'localhost';"
+        # -e => execute a SQL statement
+        
+        mysql -e "CREATE USER IF NOT EXISTS 'testuser2'@'localhost' IDENTIFIED BY 'password';"
+        mysql -e "GRANT ALL PRIVILEGES ON testdb2.* TO 'testuser2'@'localhost';"
+        
+        mysql -e "FLUSH PRIVILEGES;"
+    else
+        echo "Unsupported database type: $db_type"
+        exit 1
+    fi
+}
+
+# USAGE
+# setup_databases "postgres"
+# setup_databases "mysql"
