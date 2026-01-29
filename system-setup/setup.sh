@@ -8,17 +8,11 @@ IFS=$'\n\t'
 # IFS=$'\n\t' => Controls how Bash splits words
 
 
-# VARIABLES DEFINITIONS
-
-
 # Detect OS (Linux / macOS)
 # Install required software (specific versions)
 # Configure environment variables
 # Clone repositories
 # Set up test databases
-# Be safe to run multiple times (idempotent)
-# Fail fast on errors
-# echo "🚀 Starting developer environment setup..."
 
 # Detect User OS
 detect_os() {
@@ -32,8 +26,6 @@ detect_os() {
     fi
 
 }
-# USAGE
-# detect_os
 
 # Check if a package is installed and install if missing
 install_if_missing() {
@@ -56,15 +48,6 @@ install_if_missing() {
     # eval => Executes the command
     # local => Creates a local variable
 }
-
-# Check and install Homebrew
-install_if_missing "brew" '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
-
-# Check and install Node and Git
-install_if_missing "node"
-install_if_missing "git"
-
-# echo "$OS"
 
 # Configure environment variables
 configure_env() {
@@ -97,10 +80,6 @@ configure_env() {
     # shellenv => Prints the shell environment variables
 }
 
-# Ensure OS is detected before configuring env
-detect_os
-configure_env
-
 # Clone repositories
 clone_repos() {
     local repos=(
@@ -129,7 +108,6 @@ clone_repos() {
         fi
     done
 }
-
 
 # Set up test databases
 setup_databases() {
@@ -180,6 +158,12 @@ setup_databases() {
     fi
 }
 
-# USAGE
+# USAGE (Maintain order of execution)
+# detect_os
+# install_if_missing "brew" '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+# install_if_missing "node"
+# install_if_missing "git"
+# configure_env
+# clone_repos
 # setup_databases "postgres"
-# setup_databases "mysql"
+# setup_databases "mysql" 
