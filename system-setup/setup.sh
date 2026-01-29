@@ -65,3 +65,39 @@ install_if_missing "node"
 install_if_missing "git"
 
 # echo "$OS"
+
+# Configure environment variables
+configure_env() {
+    local shell_config
+    if [[ "$SHELL" == */zsh ]]; then
+        shell_config="$HOME/.zshrc"
+    else
+        shell_config="$HOME/.bashrc"
+    fi
+
+    echo "Configuring environment in $shell_config..."
+    
+    # Add Homebrew to PATH if needed
+    if [[ "$OS" == "Linux" ]]; then
+       if ! grep -q "/home/linuxbrew/.linuxbrew/bin" "$shell_config"; then
+            echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> "$shell_config"
+       fi
+    elif [[ "$OS" == "macOS" ]]; then
+       if ! grep -q "/opt/homebrew/bin" "$shell_config"; then
+            echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> "$shell_config"
+       fi
+    fi
+
+    # -q => Suppresses output
+    # grep -q => Suppresses output
+    # grep -q "/opt/homebrew/bin" "$shell_config" => Checks if "/opt/homebrew/bin" exists in "$shell_config"
+    # ! => Negates the result of the command
+    # >> => Appends to the file
+    # eval => Executes the command
+    # shellenv => Prints the shell environment variables
+}
+
+# Ensure OS is detected before configuring env
+detect_os
+configure_env
+
