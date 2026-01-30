@@ -40,17 +40,57 @@ An idempotent script to automate the setup of a developer environment on macOS o
   - Grants necessary privileges.
 
 **Usage:**
-```bash
 # General setup (defaults to PostgreSQL)
 ./system-setup/setup.sh
 
 # Or run specific functions manually locally if needed (by sourcing):
 # source ./system-setup/setup.sh
 # setup_databases "mysql"
+
+### 3. Log Rotation Script (`log-rotation/log-rotation.sh`)
+
+This script manages log files by separating valid logs from old ones, compressing them to save space, and deleting logs older than a specified retention period.
+
+**Features:**
+- **Rotation**: Renames `.log` files with a date stamp (e.g., `app.log.2023-10-27`) and recreates the original empty log file.
+- **Compression**: Compresses rotated logs using `gzip` to save disk space.
+- **Cleanup**: Deletes compressed logs older than a configurable number of days (default: 0 for testing, typically 7+).
+
+**Usage:**
+```bash
+./log-rotation/log-rotation.sh
 ```
 
-**Key Functions:**
-- `install_if_missing`: Generic function to check and install packages.
-- `configure_env`: Updates shell configuration files.
-- `setup_databases [type]`: Sets up the specified database type.
+**Automated Scheduling (Cron):**
+To run this daily at midnight:
+```bash
+0 0 * * * /path/to/log-rotation.sh >> /path/to/log-rotation.log 2>&1
+```
+
+**Configuration:**
+- `LOG_DIR`: Directory containing the log files (default: `./logs`).
+- `DAYS_TO_KEEP`: Number of days to retain old logs.
+
+### 4. System Backup Script (`system-backup/back-up.sh`)
+
+Automates the backup of critical directories to a local archive and uploads it to an AWS S3 bucket for offsite storage.
+
+**Features:**
+- **Compression**: Archives the source directory into a `.tar.gz` file.
+- **Exclusions**: Customizable exclusion of large or unnecessary directories.
+- **Cloud Upload**: Uploads the archive to a specified AWS S3 bucket.
+- **Retention**: Deletes local backup archives older than 7 days.
+
+**Prerequisites:**
+- AWS CLI installed and configured (`aws configure`).
+
+**Usage:**
+```bash
+./system-backup/back-up.sh
+```
+
+**Configuration:**
+- `BACKUP_SOURCE`: The directory path to back up.
+- `BACKUP_DIR`: Local path to store generated archives.
+- `BUCKET_NAME`: Target AWS S3 bucket name.
 
