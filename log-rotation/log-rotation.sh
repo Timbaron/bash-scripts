@@ -52,3 +52,25 @@ find "$LOG_DIR" -name "*.log.*" -mtime +$DAYS_TO_KEEP -delete
 echo "Log rotation completed"
 
 
+# Don't run on script, add to cron job
+
+# GOTO terminal and type crontab -e
+# Add the following line
+# 0 0 * * * /path/to/log-rotation.sh
+# This will run the script every day at midnight
+# Save and exit
+
+# 0 => minute
+# 0 => hour
+# * => day of the month
+# * => month
+# * => day of the week
+
+# To check the cron job
+# crontab -l
+# To remove the cron job
+# crontab -r
+
+
+
+
