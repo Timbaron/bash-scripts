@@ -56,7 +56,7 @@ echo "Log rotation completed"
 
 # GOTO terminal and type crontab -e
 # Add the following line
-# 0 0 * * * /path/to/log-rotation.sh
+# 0 0 * * * /path/to/log-rotation.sh >> /path/to/log-rotation.log 2>&1
 # This will run the script every day at midnight
 # Save and exit
 
