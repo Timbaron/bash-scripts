@@ -94,3 +94,21 @@ Automates the backup of critical directories to a local archive and uploads it t
 - `BACKUP_DIR`: Local path to store generated archives.
 - `BUCKET_NAME`: Target AWS S3 bucket name.
 
+### 5. Server Health Check Script (`server-health-check/server_health_check.sh`)
+
+A cross-platform script (Linux & macOS) to monitor server health metrics including CPU usage, memory usage, and uptime. It uses OS-specific commands to gather data and alerts if usage exceeds defined thresholds.
+
+**Features:**
+- **Cross-Platform Support**: Automatically detects and runs appropriate commands for Linux and macOS.
+- **Metric Monitoring**: Checks CPU usage, Memory percentage, and System Uptime.
+- **Alerting**: Triggers alerts if CPU or Memory usage exceeds configurable thresholds (default: CPU > 80%, RAM > 75%).
+
+**Usage:**
+```bash
+./server-health-check/server_health_check.sh
+```
+
+**Configuration:**
+- `CPU_THRESHOLD`: Percentage threshold for CPU usage alerts.
+- `MEM_THRESHOLD`: Percentage threshold for Memory usage alerts.
+
